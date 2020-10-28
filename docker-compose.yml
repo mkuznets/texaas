@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  api:
+    build:
+      context: .
+      target: txs
+    image: txs:latest
+    container_name: "txs-api"
+    restart: unless-stopped
+    networks:
+      - web
+      - default
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    environment:
+      - ADDR=0.0.0.0:8080
+    depends_on:
+      - db
+    command: [ "/srv/txs", "api" ]
+
+  db:
+    image: mkznts/base-postgres:0.3
+    container_name: "txs-db"
+    volumes:
+      - txs-db:/var/lib/postgresql/data
+      - ./sql:/sql
+    environment:
+      - PGUSER=${DB_USER}  # override default user for promptless `psql`
+    networks:
+      - default
+
+
+networks:
+  web:
+    external: true
+
+volumes:
+  txs-db:
+    external: true
