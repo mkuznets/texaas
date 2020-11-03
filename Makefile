@@ -11,6 +11,7 @@ all: texaas
 
 texaas:
 	export CGO_ENABLED=0
+	go generate ./...
 	go build -ldflags=${LDFLAGS} mkuznets.com/go/texaas/cmd/tx
 	go build -ldflags=${LDFLAGS} mkuznets.com/go/texaas/cmd/txs
 

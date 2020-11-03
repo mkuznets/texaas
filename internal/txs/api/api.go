@@ -1,29 +1,46 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/rs/zerolog/log"
+	"mkuznets.com/go/texaas/internal/txs"
+	"mkuznets.com/go/texaas/internal/txs/opts"
 
 	"github.com/go-chi/chi"
-	"mkuznets.com/go/texaas/internal/tx"
 )
 
 type Command struct {
-	tx.Command
+	DB       *opts.DB `group:"PostgreSQL" namespace:"db" env-namespace:"DB"`
+	Addr     string   `long:"addr" env:"ADDR" description:"HTTP service address" default:"127.0.0.1:7777"`
+	CacheDir string   `long:"cache-dir" env:"CACHE_DIR" description:"input cache path" required:"true"`
+	txs.Command
 }
 
 func (cmd *Command) Execute([]string) error {
 
 	router := chi.NewRouter()
 
+	pool, err := cmd.DB.GetPool()
+	if err != nil {
+		return err
+	}
+
+	api := &API{
+		DB:       pool,
+		CacheDir: cmd.CacheDir,
+	}
+
 	router.Route("/", func(r chi.Router) {
-		r.Post("/upload", handler)
+		r.Post("/builds", api.CreateBuild)
+		r.Get("/builds/{buildID:[0-9]+}", api.GetBuild)
+		r.Post("/builds/{buildID:[0-9]+}/start", api.StartBuild)
+		r.Post("/upload", api.Upload)
 	})
 
 	server := &http.Server{
-		Addr:    ":7777",
+		Addr:    cmd.Addr,
 		Handler: router,
 	}
 
@@ -34,21 +51,7 @@ func (cmd *Command) Execute([]string) error {
 	return nil
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-
-	err := r.ParseMultipartForm(32 * 1024 * 1024)
-	if err != nil {
-		fmt.Fprintln(w, err)
-		return
-	}
-
-	mf := r.MultipartForm
-
-	fmt.Println(r.Proto)
-
-	for i, file := range mf.File["files"] {
-		fmt.Println(i, file.Filename)
-	}
-
-	w.WriteHeader(204)
+type API struct {
+	DB       *pgxpool.Pool
+	CacheDir string
 }

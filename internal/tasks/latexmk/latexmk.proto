@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "mkuznets.com/go/texaas/internal/tasks/latexmk";
+
+package latexmk;
+
+message Args {
+    repeated File files = 1;
+}
+
+message File {
+    string key = 1;
+    string path = 2;
+}
+
+
+message Result {
+}

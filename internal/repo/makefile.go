@@ -13,7 +13,7 @@ import (
 )
 
 type Input struct {
-	AbsPath  string
+	Path     string
 	RepoPath string `json:"path"`
 	Hash     string `json:"hash"`
 }
@@ -39,7 +39,6 @@ func (e *InputsNotExistError) Error() string {
 }
 
 func (repo *Repo) Makefile(mfPath string) (*Makefile, error) {
-
 	mfPath, err := filepath.Abs(filepath.Clean(mfPath))
 	if err != nil {
 		return nil, err
@@ -89,7 +88,7 @@ func (repo *Repo) Makefile(mfPath string) (*Makefile, error) {
 		}
 
 		inputs = append(inputs, &Input{
-			AbsPath:  fullPath,
+			Path:     fullPath,
 			RepoPath: repoPath,
 		})
 	}
@@ -99,7 +98,7 @@ func (repo *Repo) Makefile(mfPath string) (*Makefile, error) {
 	}
 
 	for _, input := range inputs {
-		h, err := hash(input.AbsPath)
+		h, err := hash(input.Path)
 		if err != nil {
 			return nil, err
 		}

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/jessevdk/go-flags"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 )
 
@@ -14,6 +15,8 @@ type Commander interface {
 }
 
 func main() {
+	_ = godotenv.Load()
+
 	var opts Options
 	parser := flags.NewParser(&opts, flags.Default)
 

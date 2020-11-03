@@ -14,7 +14,6 @@ type Repo struct {
 }
 
 func New(workDir string) (*Repo, error) {
-
 	workDir, err := filepath.Abs(filepath.Clean(workDir))
 	if err != nil {
 		return nil, err

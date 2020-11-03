@@ -9,8 +9,7 @@ import (
 
 // Options is a group of common options for all subcommands.
 type Options struct {
-	ConfigPath string `short:"c" long:"config" description:"Config path" env:"TX_CONFIG"`
-	Debug      bool   `long:"debug" description:"Enable debug logging" env:"TX_DEBUG"`
+	Debug bool `long:"debug" description:"Enable debug logging" env:"TX_DEBUG"`
 }
 
 // Command is a common part of all subcommands.
