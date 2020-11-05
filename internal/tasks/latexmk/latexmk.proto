@@ -16,3 +16,21 @@ message File {
 
 message Result {
 }
+
+
+message WS {
+    string path = 1;
+    string volume = 2;
+}
+
+message Empty {
+
+}
+
+service Workspace {
+    rpc New (Args) returns (WS) {
+    }
+    rpc Close (stream WS) returns (Empty) {
+    }
+}
+

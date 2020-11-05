@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"mkuznets.com/go/texaas/internal/tasks/latexmk"
 
@@ -18,17 +19,36 @@ type Command struct {
 	txs.Command
 }
 
-func LatexMk(_ context.Context, task ocher.Task) ([]byte, error) {
+func LatexMk(ctx context.Context, task ocher.Task) ([]byte, error) {
 
 	args := latexmk.Args{}
 	if err := proto.Unmarshal(task.Args(), &args); err != nil {
 		return nil, err
 	}
 
-	err := task.Report(fmt.Sprintf("Got %d files", len(args.Files)))
+	conn, err := grpc.DialContext(ctx, "127.0.0.1:50052", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		return nil, err
 	}
+
+	workspace := latexmk.NewWorkspaceClient(conn)
+
+	ws, err := workspace.New(ctx, &args)
+	if err != nil {
+		return nil, err
+	}
+
+	closeStream, err := workspace.Close(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = closeStream.Send(ws)
+		_ = closeStream.CloseSend()
+	}()
+
+	fmt.Println(ws.Path)
+	fmt.Println(ws.Volume)
 
 	return nil, nil
 }
