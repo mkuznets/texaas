@@ -18,6 +18,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1
+	github.com/rakyll/statik v0.1.7
 	github.com/rs/zerolog v1.20.0
 	golang.org/x/sys v0.0.0-20201028094953-708e7fb298ac // indirect
 	google.golang.org/grpc v1.33.1
