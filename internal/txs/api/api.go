@@ -5,8 +5,8 @@ import (
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/rs/zerolog/log"
+	"mkuznets.com/go/texaas/internal/opts"
 	"mkuznets.com/go/texaas/internal/txs"
-	"mkuznets.com/go/texaas/internal/txs/opts"
 
 	"github.com/go-chi/chi"
 )

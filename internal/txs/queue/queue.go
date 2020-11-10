@@ -6,8 +6,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"mkuznets.com/go/ocher"
 	"mkuznets.com/go/ocher/log/zerologadapter"
+	"mkuznets.com/go/texaas/internal/opts"
 	"mkuznets.com/go/texaas/internal/txs"
-	"mkuznets.com/go/texaas/internal/txs/opts"
 )
 
 type Command struct {
