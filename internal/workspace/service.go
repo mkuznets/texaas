@@ -8,9 +8,16 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/rakyll/statik/fs"
 	"mkuznets.com/go/texaas/internal/cache"
+	ufs "mkuznets.com/go/texaas/internal/fs"
 	_ "mkuznets.com/go/texaas/internal/workspace/fs"
 	"mkuznets.com/go/texaas/internal/workspace/pb"
+)
+
+const (
+	UID = 2000
+	GID = 2000
 )
 
 type Service struct {
@@ -32,9 +39,46 @@ func (s *Service) New(_ context.Context, args *pb.Args) (*pb.WS, error) {
 
 	for _, name := range []string{"lower/texaas", "upper", "work", "merged"} {
 		path := filepath.Join(basePath, name)
-		if err := mkDir(path); err != nil {
+		if err := os.MkdirAll(path, os.FileMode(0755)); err != nil {
 			return nil, err
 		}
+	}
+
+	toolsFs, err := fs.NewWithNamespace("workspace")
+	if err != nil {
+		return nil, err
+	}
+
+	err = fs.Walk(toolsFs, "/", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		dst := filepath.Join(basePath, path)
+
+		if info.IsDir() {
+			if err := os.MkdirAll(dst, os.FileMode(0755)); err != nil {
+				return err
+			}
+			return nil
+		}
+
+		fout, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, info.Mode())
+		if err != nil {
+			return err
+		}
+		fin, err := toolsFs.Open(path)
+		if err != nil {
+			return err
+		}
+		if err := copyIO(fin, fout); err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	repoDir := filepath.Join(basePath, "lower", "texaas")
@@ -47,13 +91,22 @@ func (s *Service) New(_ context.Context, args *pb.Args) (*pb.WS, error) {
 		src := item.Path(s.cacheDir)
 		dst := filepath.Join(repoDir, file.Path)
 
-		if err := mkDir(filepath.Dir(dst)); err != nil {
+		if err := os.MkdirAll(filepath.Dir(dst), os.FileMode(0755)); err != nil {
 			return nil, err
 		}
+		if err := ufs.CopyFile(src, dst); err != nil {
+			return nil, err
+		}
+	}
 
-		if err := copyFile(src, dst); err != nil {
-			return nil, err
+	err = filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
 		}
+		return os.Chown(path, UID, GID)
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	merged := filepath.Join(basePath, "merged")
