@@ -165,5 +165,5 @@ var _Workspace_serviceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 	},
-	Metadata: "latexmk.proto",
+	Metadata: "service.proto",
 }

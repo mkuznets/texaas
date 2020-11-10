@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.25.0
 // 	protoc        v3.13.0
-// source: latexmk.proto
+// source: service.proto
 
 package pb
 
@@ -37,7 +37,7 @@ type Args struct {
 func (x *Args) Reset() {
 	*x = Args{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_latexmk_proto_msgTypes[0]
+		mi := &file_service_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -50,7 +50,7 @@ func (x *Args) String() string {
 func (*Args) ProtoMessage() {}
 
 func (x *Args) ProtoReflect() protoreflect.Message {
-	mi := &file_latexmk_proto_msgTypes[0]
+	mi := &file_service_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +63,7 @@ func (x *Args) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Args.ProtoReflect.Descriptor instead.
 func (*Args) Descriptor() ([]byte, []int) {
-	return file_latexmk_proto_rawDescGZIP(), []int{0}
+	return file_service_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Args) GetFiles() []*File {
@@ -85,7 +85,7 @@ type File struct {
 func (x *File) Reset() {
 	*x = File{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_latexmk_proto_msgTypes[1]
+		mi := &file_service_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -98,7 +98,7 @@ func (x *File) String() string {
 func (*File) ProtoMessage() {}
 
 func (x *File) ProtoReflect() protoreflect.Message {
-	mi := &file_latexmk_proto_msgTypes[1]
+	mi := &file_service_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -111,7 +111,7 @@ func (x *File) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use File.ProtoReflect.Descriptor instead.
 func (*File) Descriptor() ([]byte, []int) {
-	return file_latexmk_proto_rawDescGZIP(), []int{1}
+	return file_service_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *File) GetKey() string {
@@ -137,7 +137,7 @@ type Result struct {
 func (x *Result) Reset() {
 	*x = Result{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_latexmk_proto_msgTypes[2]
+		mi := &file_service_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -150,7 +150,7 @@ func (x *Result) String() string {
 func (*Result) ProtoMessage() {}
 
 func (x *Result) ProtoReflect() protoreflect.Message {
-	mi := &file_latexmk_proto_msgTypes[2]
+	mi := &file_service_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -163,7 +163,7 @@ func (x *Result) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Result.ProtoReflect.Descriptor instead.
 func (*Result) Descriptor() ([]byte, []int) {
-	return file_latexmk_proto_rawDescGZIP(), []int{2}
+	return file_service_proto_rawDescGZIP(), []int{2}
 }
 
 type WS struct {
@@ -178,7 +178,7 @@ type WS struct {
 func (x *WS) Reset() {
 	*x = WS{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_latexmk_proto_msgTypes[3]
+		mi := &file_service_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -191,7 +191,7 @@ func (x *WS) String() string {
 func (*WS) ProtoMessage() {}
 
 func (x *WS) ProtoReflect() protoreflect.Message {
-	mi := &file_latexmk_proto_msgTypes[3]
+	mi := &file_service_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -204,7 +204,7 @@ func (x *WS) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WS.ProtoReflect.Descriptor instead.
 func (*WS) Descriptor() ([]byte, []int) {
-	return file_latexmk_proto_rawDescGZIP(), []int{3}
+	return file_service_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *WS) GetPath() string {
@@ -230,7 +230,7 @@ type Empty struct {
 func (x *Empty) Reset() {
 	*x = Empty{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_latexmk_proto_msgTypes[4]
+		mi := &file_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -243,7 +243,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_latexmk_proto_msgTypes[4]
+	mi := &file_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -256,13 +256,13 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_latexmk_proto_rawDescGZIP(), []int{4}
+	return file_service_proto_rawDescGZIP(), []int{4}
 }
 
-var File_latexmk_proto protoreflect.FileDescriptor
+var File_service_proto protoreflect.FileDescriptor
 
-var file_latexmk_proto_rawDesc = []byte{
-	0x0a, 0x0d, 0x6c, 0x61, 0x74, 0x65, 0x78, 0x6d, 0x6b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
+var file_service_proto_rawDesc = []byte{
+	0x0a, 0x0d, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
 	0x07, 0x6c, 0x61, 0x74, 0x65, 0x78, 0x6d, 0x6b, 0x22, 0x2b, 0x0a, 0x04, 0x41, 0x72, 0x67, 0x73,
 	0x12, 0x23, 0x0a, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
 	0x0d, 0x2e, 0x6c, 0x61, 0x74, 0x65, 0x78, 0x6d, 0x6b, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x52, 0x05,
@@ -286,26 +286,26 @@ var file_latexmk_proto_rawDesc = []byte{
 }
 
 var (
-	file_latexmk_proto_rawDescOnce sync.Once
-	file_latexmk_proto_rawDescData = file_latexmk_proto_rawDesc
+	file_service_proto_rawDescOnce sync.Once
+	file_service_proto_rawDescData = file_service_proto_rawDesc
 )
 
-func file_latexmk_proto_rawDescGZIP() []byte {
-	file_latexmk_proto_rawDescOnce.Do(func() {
-		file_latexmk_proto_rawDescData = protoimpl.X.CompressGZIP(file_latexmk_proto_rawDescData)
+func file_service_proto_rawDescGZIP() []byte {
+	file_service_proto_rawDescOnce.Do(func() {
+		file_service_proto_rawDescData = protoimpl.X.CompressGZIP(file_service_proto_rawDescData)
 	})
-	return file_latexmk_proto_rawDescData
+	return file_service_proto_rawDescData
 }
 
-var file_latexmk_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_latexmk_proto_goTypes = []interface{}{
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_service_proto_goTypes = []interface{}{
 	(*Args)(nil),   // 0: latexmk.Args
 	(*File)(nil),   // 1: latexmk.File
 	(*Result)(nil), // 2: latexmk.Result
 	(*WS)(nil),     // 3: latexmk.WS
 	(*Empty)(nil),  // 4: latexmk.Empty
 }
-var file_latexmk_proto_depIdxs = []int32{
+var file_service_proto_depIdxs = []int32{
 	1, // 0: latexmk.Args.files:type_name -> latexmk.File
 	0, // 1: latexmk.Workspace.New:input_type -> latexmk.Args
 	3, // 2: latexmk.Workspace.Close:input_type -> latexmk.WS
@@ -318,13 +318,13 @@ var file_latexmk_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_latexmk_proto_init() }
-func file_latexmk_proto_init() {
-	if File_latexmk_proto != nil {
+func init() { file_service_proto_init() }
+func file_service_proto_init() {
+	if File_service_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_latexmk_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Args); i {
 			case 0:
 				return &v.state
@@ -336,7 +336,7 @@ func file_latexmk_proto_init() {
 				return nil
 			}
 		}
-		file_latexmk_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*File); i {
 			case 0:
 				return &v.state
@@ -348,7 +348,7 @@ func file_latexmk_proto_init() {
 				return nil
 			}
 		}
-		file_latexmk_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Result); i {
 			case 0:
 				return &v.state
@@ -360,7 +360,7 @@ func file_latexmk_proto_init() {
 				return nil
 			}
 		}
-		file_latexmk_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*WS); i {
 			case 0:
 				return &v.state
@@ -372,7 +372,7 @@ func file_latexmk_proto_init() {
 				return nil
 			}
 		}
-		file_latexmk_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Empty); i {
 			case 0:
 				return &v.state
@@ -389,18 +389,18 @@ func file_latexmk_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_latexmk_proto_rawDesc,
+			RawDescriptor: file_service_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_latexmk_proto_goTypes,
-		DependencyIndexes: file_latexmk_proto_depIdxs,
-		MessageInfos:      file_latexmk_proto_msgTypes,
+		GoTypes:           file_service_proto_goTypes,
+		DependencyIndexes: file_service_proto_depIdxs,
+		MessageInfos:      file_service_proto_msgTypes,
 	}.Build()
-	File_latexmk_proto = out.File
-	file_latexmk_proto_rawDesc = nil
-	file_latexmk_proto_goTypes = nil
-	file_latexmk_proto_depIdxs = nil
+	File_service_proto = out.File
+	file_service_proto_rawDesc = nil
+	file_service_proto_goTypes = nil
+	file_service_proto_depIdxs = nil
 }
