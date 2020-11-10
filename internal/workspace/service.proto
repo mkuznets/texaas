@@ -6,6 +6,10 @@ package latexmk;
 
 message Args {
     repeated File files = 1;
+    string main_source = 2;
+    string base_path = 3;
+    string compiler = 4;
+    string latex = 5;
 }
 
 message File {

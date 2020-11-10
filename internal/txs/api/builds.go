@@ -10,17 +10,13 @@ import (
 	"github.com/jackc/pgx/v4"
 	"google.golang.org/protobuf/proto"
 	"mkuznets.com/go/texaas/internal/db"
+	"mkuznets.com/go/texaas/internal/repo"
 	E "mkuznets.com/go/texaas/internal/txs/api/errors"
 	"mkuznets.com/go/texaas/internal/workspace/pb"
 )
 
 func (api *API) CreateBuild(w http.ResponseWriter, r *http.Request) {
-	var data struct {
-		Inputs []struct {
-			Path string
-			Hash string
-		}
-	}
+	var data repo.Makefile
 
 	if err := render.DecodeJSON(r.Body, &data); err != nil {
 		E.SendError(w, r, nil, http.StatusBadRequest, "invalid input")
@@ -40,7 +36,10 @@ func (api *API) CreateBuild(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 
-		err = tx.QueryRow(ctx, `INSERT INTO texaas_builds (task_id) VALUES ($1) RETURNING id;`, taskID).Scan(&buildID)
+		err = tx.QueryRow(ctx, `
+		INSERT INTO texaas_builds (task_id, base_path, main_source, compiler, latex)
+		VALUES ($1, $2, $3, $4, $5) RETURNING id;
+		`, taskID, data.RepoPath, data.MainSource, data.Compiler, data.Latex).Scan(&buildID)
 		if err != nil {
 			return err
 		}
@@ -67,7 +66,7 @@ func (api *API) CreateBuild(w http.ResponseWriter, r *http.Request) {
 
 			_, err = tx.Exec(ctx, `
 			INSERT INTO texaas_inputs (build_id, cache_id, path)
-			VALUES ($1, $2, $3);`, buildID, cacheID, input.Path)
+			VALUES ($1, $2, $3);`, buildID, cacheID, input.RepoPath)
 			if err != nil {
 				return err
 			}
@@ -143,12 +142,14 @@ func (api *API) StartBuild(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	taskArgs := &pb.Args{}
+	args := &pb.Args{}
 
 	err = db.Tx(ctx, api.DB, func(tx pgx.Tx) error {
 		var taskID uint64
 
-		err := tx.QueryRow(ctx, `SELECT task_id FROM texaas_builds WHERE id=$1;`, buildID).Scan(&taskID)
+		err := tx.QueryRow(ctx, `
+		SELECT task_id, base_path, main_source, compiler, latex FROM texaas_builds WHERE id=$1;
+		`, buildID).Scan(&taskID, &args.BasePath, &args.MainSource, &args.Compiler, &args.Latex)
 		if err != nil {
 			if err == pgx.ErrNoRows {
 				return E.New(nil, http.StatusNotFound, "invalid build")
@@ -175,14 +176,14 @@ func (api *API) StartBuild(w http.ResponseWriter, r *http.Request) {
 			if !isReady {
 				return E.New(nil, http.StatusBadRequest, "build is not ready")
 			}
-			taskArgs.Files = append(taskArgs.Files, file)
+			args.Files = append(args.Files, file)
 			return nil
 		})
 		if err != nil {
 			return err
 		}
 
-		args, err := proto.Marshal(taskArgs)
+		args, err := proto.Marshal(args)
 		if err != nil {
 			return err
 		}

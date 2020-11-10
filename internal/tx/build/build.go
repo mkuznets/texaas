@@ -21,10 +21,6 @@ type Command struct {
 	tx.Command
 }
 
-type buildData struct {
-	Inputs []*repo.Input
-}
-
 type prepareResult struct {
 	BuildID  uint64 `json:"build_id"`
 	Uncashed []string
@@ -43,12 +39,8 @@ func (cmd *Command) Execute([]string) error {
 		panic(er)
 	}
 
-	data := &buildData{
-		Inputs: mf.Inputs,
-	}
-
 	body := bytes.NewBuffer(nil)
-	if err := json.NewEncoder(body).Encode(data); err != nil {
+	if err := json.NewEncoder(body).Encode(mf); err != nil {
 		return err
 	}
 

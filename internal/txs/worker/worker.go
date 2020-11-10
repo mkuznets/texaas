@@ -3,10 +3,13 @@ package worker
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
+	"mkuznets.com/go/texaas/internal/docker"
+	"mkuznets.com/go/texaas/internal/docker/run"
 	"mkuznets.com/go/texaas/internal/workspace/pb"
 
 	"mkuznets.com/go/ocher"
@@ -49,6 +52,25 @@ func LatexMk(ctx context.Context, task ocher.Task) ([]byte, error) {
 
 	fmt.Println(ws.Path)
 	fmt.Println(ws.Volume)
+
+	dc, err := docker.New()
+	if err != nil {
+		return nil, err
+	}
+
+	opts := []run.Option{
+		run.Image("ghcr.io/mkuznets/texlive", "2019-ubuntu-2020.11.07"),
+		run.Cmd("/tools/build.sh", args.BasePath, args.MainSource),
+		run.Mount(ws.Volume, "/latex", ""),
+		run.Mount(ws.Path+"/tools", "/tools", "ro"),
+		run.EnableNetwork(false),
+		run.CombinedOutput(os.Stdout),
+		run.Autoremove(true),
+	}
+
+	if err := dc.Run(ctx, opts...); err != nil {
+		return nil, err
+	}
 
 	return nil, nil
 }

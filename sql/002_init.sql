@@ -1,9 +1,13 @@
 DROP TABLE IF EXISTS texaas_builds;
 CREATE TABLE IF NOT EXISTS texaas_builds
 (
-    id         bigserial PRIMARY KEY,
-    created_at timestamptz                               NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    task_id    bigint REFERENCES ocher_tasks (id) UNIQUE NOT NULL
+    id          bigserial PRIMARY KEY,
+    created_at  timestamptz                               NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    task_id     bigint REFERENCES ocher_tasks (id) UNIQUE NOT NULL,
+    base_path   text                                      NOT NULL,
+    main_source text                                      NOT NULL,
+    compiler    text                                      NOT NULL,
+    latex       text                                      NOT NULL
 );
 
 

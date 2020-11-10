@@ -14,18 +14,23 @@ import (
 
 type Input struct {
 	Path     string
-	RepoPath string `json:"path"`
+	RepoPath string `json:"repo_path"`
 	Hash     string `json:"hash"`
 }
 
 type Makefile struct {
-	Inputs []*Input
+	Latex      string   `json:"latex"`
+	Compiler   string   `json:"compiler"`
+	RepoPath   string   `json:"base_path"`
+	MainSource string   `json:"main_source"`
+	Inputs     []*Input `json:"inputs"`
 }
 
 type makeRaw struct {
 	ID       string
-	TexLive  string
+	Latex    string
 	Compiler string
+	Main     string
 	Inputs   []string
 	Targets  []string
 }
@@ -43,8 +48,6 @@ func (repo *Repo) Makefile(mfPath string) (*Makefile, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	makefile := new(Makefile)
 
 	mk, err := parseYaml(mfPath)
 	if err != nil {
@@ -105,7 +108,18 @@ func (repo *Repo) Makefile(mfPath string) (*Makefile, error) {
 		input.Hash = h
 	}
 
-	makefile.Inputs = inputs
+	mkRepoPath, err := filepath.Rel(repo.Root, repo.WorkDir)
+	if err != nil {
+		return nil, err
+	}
+
+	makefile := &Makefile{
+		MainSource: mk.Main,
+		Latex:      mk.Latex,
+		Compiler:   mk.Compiler,
+		Inputs:     inputs,
+		RepoPath:   mkRepoPath,
+	}
 
 	return makefile, nil
 }
