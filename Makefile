@@ -1,5 +1,5 @@
 VERSION := $(shell cat VERSION)
-REVISION := "" #$(shell scripts/git-rev.sh)
+REVISION := $(shell scripts/git-rev.sh)
 BUILD_TIME := $(shell TZ=Etc/UTC date +'%Y-%m-%dT%H:%M:%SZ')
 
 VERSION_FLAG := -X mkuznets.com/go/texaas/internal/version.version=${VERSION}
