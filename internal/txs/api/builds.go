@@ -10,8 +10,8 @@ import (
 	"github.com/jackc/pgx/v4"
 	"google.golang.org/protobuf/proto"
 	"mkuznets.com/go/texaas/internal/db"
-	"mkuznets.com/go/texaas/internal/tasks/latexmk"
 	E "mkuznets.com/go/texaas/internal/txs/api/errors"
+	"mkuznets.com/go/texaas/internal/workspace/pb"
 )
 
 func (api *API) CreateBuild(w http.ResponseWriter, r *http.Request) {
@@ -143,7 +143,7 @@ func (api *API) StartBuild(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	taskArgs := &latexmk.Args{}
+	taskArgs := &pb.Args{}
 
 	err = db.Tx(ctx, api.DB, func(tx pgx.Tx) error {
 		var taskID uint64
@@ -168,7 +168,7 @@ func (api *API) StartBuild(w http.ResponseWriter, r *http.Request) {
 
 		err = db.IterRows(rows, func(rows pgx.Rows) error {
 			isReady := false
-			file := &latexmk.File{}
+			file := &pb.File{}
 			if err := rows.Scan(&file.Path, &file.Key, &isReady); err != nil {
 				return err
 			}

@@ -9,15 +9,22 @@ import (
 	"syscall"
 
 	"mkuznets.com/go/texaas/internal/cache"
-	"mkuznets.com/go/texaas/internal/tasks/latexmk"
+	_ "mkuznets.com/go/texaas/internal/workspace/fs"
+	"mkuznets.com/go/texaas/internal/workspace/pb"
 )
 
 type Service struct {
 	cacheDir string
-	latexmk.UnimplementedWorkspaceServer
+	pb.UnimplementedWorkspaceServer
 }
 
-func (s *Service) New(_ context.Context, args *latexmk.Args) (*latexmk.WS, error) {
+func NewService(cacheDir string) *Service {
+	return &Service{
+		cacheDir: cacheDir,
+	}
+}
+
+func (s *Service) New(_ context.Context, args *pb.Args) (*pb.WS, error) {
 	basePath, err := ioutil.TempDir("", "texaas_*")
 	if err != nil {
 		return nil, err
@@ -61,7 +68,7 @@ func (s *Service) New(_ context.Context, args *latexmk.Args) (*latexmk.WS, error
 		return nil, err
 	}
 
-	result := &latexmk.WS{
+	result := &pb.WS{
 		Path:   basePath,
 		Volume: merged,
 	}
@@ -69,7 +76,7 @@ func (s *Service) New(_ context.Context, args *latexmk.Args) (*latexmk.WS, error
 	return result, nil
 }
 
-func (s *Service) Close(stream latexmk.Workspace_CloseServer) error {
+func (s *Service) Close(stream pb.Workspace_CloseServer) error {
 	ws, err := stream.Recv()
 	if err != nil {
 		return err
@@ -82,7 +89,7 @@ func (s *Service) Close(stream latexmk.Workspace_CloseServer) error {
 		return err
 	}
 
-	if err := stream.SendAndClose(&latexmk.Empty{}); err != nil {
+	if err := stream.SendAndClose(&pb.Empty{}); err != nil {
 		return err
 	}
 

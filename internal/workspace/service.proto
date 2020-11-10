@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "mkuznets.com/go/texaas/internal/tasks/latexmk";
+option go_package = "mkuznets.com/go/texaas/internal/workspace/pb";
 
 package latexmk;
 
@@ -33,4 +33,3 @@ service Workspace {
     rpc Close (stream WS) returns (Empty) {
     }
 }
-

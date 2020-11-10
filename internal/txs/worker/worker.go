@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
-	"mkuznets.com/go/texaas/internal/tasks/latexmk"
+	"mkuznets.com/go/texaas/internal/workspace/pb"
 
 	"mkuznets.com/go/ocher"
 	"mkuznets.com/go/ocher/log/zerologadapter"
@@ -21,7 +21,7 @@ type Command struct {
 
 func LatexMk(ctx context.Context, task ocher.Task) ([]byte, error) {
 
-	args := latexmk.Args{}
+	args := pb.Args{}
 	if err := proto.Unmarshal(task.Args(), &args); err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func LatexMk(ctx context.Context, task ocher.Task) ([]byte, error) {
 		return nil, err
 	}
 
-	workspace := latexmk.NewWorkspaceClient(conn)
+	workspace := pb.NewWorkspaceClient(conn)
 
 	ws, err := workspace.New(ctx, &args)
 	if err != nil {
