@@ -464,7 +464,11 @@ func CopyFile(src, dst string) (err error) {
 	if runtime.GOOS == "windows" {
 		dst = fixLongPath(dst)
 	}
-	err = os.Chmod(dst, si.Mode())
+	if err := os.Chmod(dst, si.Mode()); err != nil {
+		return err
+	}
+
+	err = os.Chtimes(dst, si.ModTime(), si.ModTime())
 
 	return
 }
