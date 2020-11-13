@@ -28,6 +28,7 @@ func (d *Docker) Run(ctx context.Context, opts ...run.Option) error {
 		AttachStderr:    r.Stderr != nil,
 		WorkingDir:      r.WorkingDir,
 		Env:             r.Env,
+		User:            r.User,
 	}
 
 	hostConf := &container.HostConfig{

@@ -19,6 +19,7 @@ type Options struct {
 	Stderr        io.Writer
 	WorkingDir    string
 	Env           []string
+	User          string
 }
 
 func New(options []Option) (*Options, error) {
@@ -109,5 +110,15 @@ func Stderr(w io.Writer) Option {
 func Stdout(w io.Writer) Option {
 	return func(r *Options) {
 		r.Stdout = w
+	}
+}
+
+func UID(uid, gid int) Option {
+	return func(r *Options) {
+		user := fmt.Sprintf("%d", uid)
+		if gid != -1 {
+			user = fmt.Sprintf("%s:%d", user, gid)
+		}
+		r.User = user
 	}
 }
