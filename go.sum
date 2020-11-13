@@ -285,5 +285,5 @@ gopkg.in/yaml.v2 v2.3.0/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.1-2019.2.3/go.mod h1:a3bituU0lyd329TUQxRnasdCoJDkEUEAqEt0JzvZhAg=
-mkuznets.com/go/ocher v0.3.1 h1:zSBnwB2lh6h6wHytmMYfKLpGJ8E4VT0j0frJ8WVFZsg=
-mkuznets.com/go/ocher v0.3.1/go.mod h1:cKdc+hlo9opeHsns/6Jr1earVHWWA0E3thseqq1kRrM=
+mkuznets.com/go/ocher v0.3.2 h1:1jUxh8FM0APo1BsxuPR1uF11hrTmzaP+tMlYOdcxYUk=
+mkuznets.com/go/ocher v0.3.2/go.mod h1:rW3NHrc86sPaaHNKrM8fXkh1qbBegsN/8w7kS+oUcTs=

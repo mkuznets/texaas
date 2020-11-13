@@ -24,5 +24,5 @@ require (
 	google.golang.org/grpc v1.33.1
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
-	mkuznets.com/go/ocher v0.3.1
+	mkuznets.com/go/ocher v0.3.2
 )
