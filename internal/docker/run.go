@@ -34,6 +34,9 @@ func (d *Docker) Run(ctx context.Context, opts ...run.Option) error {
 	hostConf := &container.HostConfig{
 		AutoRemove: r.Autoremove,
 		Binds:      r.Binds,
+		Resources: container.Resources{
+			Memory: r.Memory,
+		},
 	}
 
 	createResp, err := d.client.ContainerCreate(ctx, contConf, hostConf, nil, r.Containter)

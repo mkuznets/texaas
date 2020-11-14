@@ -20,6 +20,7 @@ type Options struct {
 	WorkingDir    string
 	Env           []string
 	User          string
+	Memory        int64
 }
 
 func New(options []Option) (*Options, error) {
@@ -120,5 +121,11 @@ func UID(uid, gid int) Option {
 			user = fmt.Sprintf("%s:%d", user, gid)
 		}
 		r.User = user
+	}
+}
+
+func Memory(v int64) Option {
+	return func(r *Options) {
+		r.Memory = v
 	}
 }
