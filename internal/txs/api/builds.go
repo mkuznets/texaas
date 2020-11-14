@@ -98,28 +98,61 @@ func (api *API) GetBuild(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var result struct {
+	type Message struct {
+		ID    int    `json:"id"`
+		Level string `json:"tag"`
+		Text  string `json:"text"`
+	}
+
+	type Build struct {
 		ID        uint64    `json:"id"`
 		CreatedAt time.Time `json:"created_at"`
 		Status    struct {
 			Name      string    `json:"name"`
 			UpdatedAt time.Time `json:"updated_at"`
 		} `json:"status"`
+		Output   *pb.WSOutput `json:"output"`
+		Messages []*Message   `json:"messages"`
 	}
+
+	build := &Build{
+		Messages: make([]*Message, 0),
+	}
+	var result []byte
 
 	ctx := r.Context()
 
 	err = db.Tx(ctx, api.DB, func(tx pgx.Tx) error {
+		var taskID uint64
+
 		err := tx.QueryRow(ctx, `
-		SELECT b.id, b.created_at, st.status, st.changed_at
-		FROM texaas_builds as b JOIN ocher_statuses as st
-		ON (st.task_id = b.task_id)
+		SELECT b.id, b.created_at, t.id, t.result, st.status, st.changed_at
+		FROM texaas_builds as b
+		JOIN ocher_statuses as st ON (st.task_id = b.task_id)
+		JOIN ocher_tasks as t ON (b.task_id = t.id)
 		WHERE b.id=$1 ORDER BY st.id DESC LIMIT 1;
-		`, buildID).Scan(&result.ID, &result.CreatedAt, &result.Status.Name, &result.Status.UpdatedAt)
+		`, buildID).Scan(&build.ID, &build.CreatedAt, &taskID, &result, &build.Status.Name, &build.Status.UpdatedAt)
 		if err != nil {
 			if err == pgx.ErrNoRows {
 				return E.New(nil, http.StatusNotFound, "build not found")
 			}
+			return err
+		}
+
+		rows, err := tx.Query(ctx, `SELECT id, tag, message FROM ocher_reports WHERE task_id=$1 ORDER BY id`, taskID)
+		if err != nil {
+			return err
+		}
+
+		err = db.IterRows(rows, func(rows pgx.Rows) error {
+			var m Message
+			if err := rows.Scan(&m.ID, &m.Level, &m.Text); err != nil {
+				return err
+			}
+			build.Messages = append(build.Messages, &m)
+			return nil
+		})
+		if err != nil {
 			return err
 		}
 
@@ -130,7 +163,16 @@ func (api *API) GetBuild(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.JSON(w, r, &result)
+	if len(result) > 0 {
+		var output pb.WSOutput
+		if err := proto.Unmarshal(result, &output); err != nil {
+			E.Handle(w, r, err)
+			return
+		}
+		build.Output = &output
+	}
+
+	render.JSON(w, r, &build)
 }
 
 func (api *API) StartBuild(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +184,7 @@ func (api *API) StartBuild(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	args := &pb.Args{}
+	args := &pb.Makefile{}
 
 	err = db.Tx(ctx, api.DB, func(tx pgx.Tx) error {
 		var taskID uint64
@@ -169,14 +211,14 @@ func (api *API) StartBuild(w http.ResponseWriter, r *http.Request) {
 
 		err = db.IterRows(rows, func(rows pgx.Rows) error {
 			isReady := false
-			file := &pb.File{}
-			if err := rows.Scan(&file.Path, &file.Key, &isReady); err != nil {
+			input := &pb.Input{}
+			if err := rows.Scan(&input.Path, &input.Key, &isReady); err != nil {
 				return err
 			}
 			if !isReady {
 				return E.New(nil, http.StatusBadRequest, "build is not ready")
 			}
-			args.Files = append(args.Files, file)
+			args.Inputs = append(args.Inputs, input)
 			return nil
 		})
 		if err != nil {

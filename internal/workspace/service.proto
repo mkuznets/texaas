@@ -4,36 +4,53 @@ option go_package = "mkuznets.com/go/texaas/internal/workspace/pb";
 
 package latexmk;
 
-message Args {
-    repeated File files = 1;
+message Makefile {
+    repeated Input inputs = 1;
     string main_source = 2;
     string base_path = 3;
     string compiler = 4;
     string latex = 5;
 }
 
-message File {
+message Input {
     string key = 1;
     string path = 2;
 }
 
 
-message Result {
+message Output {
+    string key = 1;
+    string path = 2;
+    uint64 size = 3;
 }
 
+
+message WSOutput {
+    string url = 1;
+    repeated Output outputs = 2;
+}
+
+
+message WSReq {
+    Makefile makefile = 1;
+}
+
+
+message WSID {
+    string id = 1;
+}
 
 message WS {
-    string path = 1;
-    string volume = 2;
+    WSID id = 1;
+    string path = 2;
+    string tools = 3;
+    bool closed = 4;
 }
 
-message Empty {
-
-}
 
 service Workspace {
-    rpc New (Args) returns (WS) {
+    rpc Get (stream WSReq) returns (stream WS) {
     }
-    rpc Close (stream WS) returns (Empty) {
+    rpc Output (WSID) returns (WSOutput) {
     }
 }

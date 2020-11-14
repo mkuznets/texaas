@@ -18,8 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WorkspaceClient interface {
-	New(ctx context.Context, in *Args, opts ...grpc.CallOption) (*WS, error)
-	Close(ctx context.Context, opts ...grpc.CallOption) (Workspace_CloseClient, error)
+	Get(ctx context.Context, opts ...grpc.CallOption) (Workspace_GetClient, error)
+	Output(ctx context.Context, in *WSID, opts ...grpc.CallOption) (*WSOutput, error)
 }
 
 type workspaceClient struct {
@@ -30,55 +30,52 @@ func NewWorkspaceClient(cc grpc.ClientConnInterface) WorkspaceClient {
 	return &workspaceClient{cc}
 }
 
-func (c *workspaceClient) New(ctx context.Context, in *Args, opts ...grpc.CallOption) (*WS, error) {
-	out := new(WS)
-	err := c.cc.Invoke(ctx, "/latexmk.Workspace/New", in, out, opts...)
+func (c *workspaceClient) Get(ctx context.Context, opts ...grpc.CallOption) (Workspace_GetClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Workspace_serviceDesc.Streams[0], "/latexmk.Workspace/Get", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
-}
-
-func (c *workspaceClient) Close(ctx context.Context, opts ...grpc.CallOption) (Workspace_CloseClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Workspace_serviceDesc.Streams[0], "/latexmk.Workspace/Close", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &workspaceCloseClient{stream}
+	x := &workspaceGetClient{stream}
 	return x, nil
 }
 
-type Workspace_CloseClient interface {
-	Send(*WS) error
-	CloseAndRecv() (*Empty, error)
+type Workspace_GetClient interface {
+	Send(*WSReq) error
+	Recv() (*WS, error)
 	grpc.ClientStream
 }
 
-type workspaceCloseClient struct {
+type workspaceGetClient struct {
 	grpc.ClientStream
 }
 
-func (x *workspaceCloseClient) Send(m *WS) error {
+func (x *workspaceGetClient) Send(m *WSReq) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *workspaceCloseClient) CloseAndRecv() (*Empty, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(Empty)
+func (x *workspaceGetClient) Recv() (*WS, error) {
+	m := new(WS)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
+func (c *workspaceClient) Output(ctx context.Context, in *WSID, opts ...grpc.CallOption) (*WSOutput, error) {
+	out := new(WSOutput)
+	err := c.cc.Invoke(ctx, "/latexmk.Workspace/Output", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkspaceServer is the server API for Workspace service.
 // All implementations must embed UnimplementedWorkspaceServer
 // for forward compatibility
 type WorkspaceServer interface {
-	New(context.Context, *Args) (*WS, error)
-	Close(Workspace_CloseServer) error
+	Get(Workspace_GetServer) error
+	Output(context.Context, *WSID) (*WSOutput, error)
 	mustEmbedUnimplementedWorkspaceServer()
 }
 
@@ -86,11 +83,11 @@ type WorkspaceServer interface {
 type UnimplementedWorkspaceServer struct {
 }
 
-func (UnimplementedWorkspaceServer) New(context.Context, *Args) (*WS, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method New not implemented")
+func (UnimplementedWorkspaceServer) Get(Workspace_GetServer) error {
+	return status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedWorkspaceServer) Close(Workspace_CloseServer) error {
-	return status.Errorf(codes.Unimplemented, "method Close not implemented")
+func (UnimplementedWorkspaceServer) Output(context.Context, *WSID) (*WSOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Output not implemented")
 }
 func (UnimplementedWorkspaceServer) mustEmbedUnimplementedWorkspaceServer() {}
 
@@ -105,48 +102,48 @@ func RegisterWorkspaceServer(s grpc.ServiceRegistrar, srv WorkspaceServer) {
 	s.RegisterService(&_Workspace_serviceDesc, srv)
 }
 
-func _Workspace_New_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Args)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WorkspaceServer).New(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/latexmk.Workspace/New",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkspaceServer).New(ctx, req.(*Args))
-	}
-	return interceptor(ctx, in, info, handler)
+func _Workspace_Get_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(WorkspaceServer).Get(&workspaceGetServer{stream})
 }
 
-func _Workspace_Close_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(WorkspaceServer).Close(&workspaceCloseServer{stream})
-}
-
-type Workspace_CloseServer interface {
-	SendAndClose(*Empty) error
-	Recv() (*WS, error)
+type Workspace_GetServer interface {
+	Send(*WS) error
+	Recv() (*WSReq, error)
 	grpc.ServerStream
 }
 
-type workspaceCloseServer struct {
+type workspaceGetServer struct {
 	grpc.ServerStream
 }
 
-func (x *workspaceCloseServer) SendAndClose(m *Empty) error {
+func (x *workspaceGetServer) Send(m *WS) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *workspaceCloseServer) Recv() (*WS, error) {
-	m := new(WS)
+func (x *workspaceGetServer) Recv() (*WSReq, error) {
+	m := new(WSReq)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
+}
+
+func _Workspace_Output_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WSID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkspaceServer).Output(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/latexmk.Workspace/Output",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkspaceServer).Output(ctx, req.(*WSID))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Workspace_serviceDesc = grpc.ServiceDesc{
@@ -154,14 +151,15 @@ var _Workspace_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*WorkspaceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "New",
-			Handler:    _Workspace_New_Handler,
+			MethodName: "Output",
+			Handler:    _Workspace_Output_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Close",
-			Handler:       _Workspace_Close_Handler,
+			StreamName:    "Get",
+			Handler:       _Workspace_Get_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},
