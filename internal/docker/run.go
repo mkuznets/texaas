@@ -12,6 +12,10 @@ import (
 	"mkuznets.com/go/texaas/internal/docker/run"
 )
 
+var (
+	ExitError = errors.New("non-zero exit code")
+)
+
 func (d *Docker) Run(ctx context.Context, opts ...run.Option) error {
 
 	r, err := run.New(opts)
@@ -96,7 +100,7 @@ func (d *Docker) Run(ctx context.Context, opts ...run.Option) error {
 	}
 
 	if exitCode != 0 {
-		return errors.Errorf("non-zero exit code: %d", exitCode)
+		return errors.Wrapf(ExitError, "exit code: %d", exitCode)
 	}
 
 	return nil
